@@ -2,6 +2,7 @@
 author: Thomas "wkta" Iwaszko
 MIT Licence
 """
+from katagames_sdk.engine import enum_builder
 
 
 # **> CONSTANTS <**
@@ -27,9 +28,10 @@ ASSETS = [  # warning: the order matters!
     'explosion_002.wav',  # when an obstacle is hit
     'slow-reactor.wav',  # ambiant sound
 ]
-VER = '0.2104'
+VER = '1.2108c'
 CAPTION = 'Space Gatherer v.' + VER
 FPS_CAP = 45
+UNIQUE_GAME_ID = 7
 
 # (global game balancing)
 BOMB_RECT_RATIO = 0.6
@@ -37,6 +39,18 @@ STEERING_LIMIT = 17  # px
 
 
 # **> VARIABLES <**
+username = None
+acc_id = None
+mobi_balance = None
+challengeprice = None
+challenge_id = None
+
+# (specific to space gatherer)
+GameStates = enum_builder(
+    'Intro',
+    'Game'
+)
+
 cdiff = None  # current difficulty, instance of DifficultyModel
 tag_can_remove = set()
 scoreboard = None

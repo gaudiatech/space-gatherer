@@ -15,14 +15,9 @@
 
 import glvars
 import katagames_sdk.engine as kataen
-from katagames_sdk.engine import enum_builder
 
 
 pygame = kataen.import_pygame()
-GameStates = enum_builder(
-    'Intro',
-    'Game'
-)
 
 
 def run_game():
@@ -35,7 +30,7 @@ def run_game():
                 glvars.ASSETS[k] = sep.join((glvars.ASSET_DIR, glvars.ASSETS[k]))
         update_paths()
 
-    kataen.tag_multistate(GameStates, glvars, False)
+    kataen.tag_multistate(glvars.GameStates, glvars, True)
     pygame.mixer.init()
 
     gctrl = kataen.get_game_ctrl()

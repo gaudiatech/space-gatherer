@@ -5,7 +5,8 @@ from katagames_sdk.engine import BaseGameState
 from katagames_sdk.engine import EngineEvTypes, EventReceiver
 from sprites import SpaceBg, Nugget, ScoreBoard, Bomb, Explosion
 from app.game.GameCtrl import GameCtrl
-
+import glvars
+import katagames_sdk.api as katapi
 
 pygame = kataen.import_pygame()
 
@@ -137,7 +138,19 @@ class GameState(BaseGameState):
         self._v.turn_off()
         self._ctrl.turn_off()
 
-        print('new score obtained: ', end='')
-        print("{:,}$".format(defs_sg.scoreboard.score))
+        # - auto saving score (Kata.games)
+        # debug
+        # print('gameover detected &we try to save score')
+        curr_score = defs_sg.scoreboard.score
+        res = katapi.push_score(glvars.acc_id, glvars.username, glvars.challenge_id, curr_score)
+        print('score pushed to server ->ok')
+        if not res:
+            pass
+            # print('->WARNING<- smth went wrong with api.push_score(...)')
+            # print(glvars.acc_id, glvars.username, glvars.challenge_id, curr_score)
+        else:
+            print('congrats! Youve beaten your previous record')
 
-        defs_sg.last_score = defs_sg.scoreboard.score
+        print('score for this run: ', end='')
+        print("{:,}$".format(curr_score))
+        defs_sg.last_score = curr_score
