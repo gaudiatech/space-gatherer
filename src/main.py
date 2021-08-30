@@ -13,10 +13,9 @@
  email: contact@kata.games
 """
 
-import defs_sg
+import glvars
 import katagames_sdk.engine as kataen
 from katagames_sdk.engine import enum_builder
-import defs_sg as glvars
 
 
 pygame = kataen.import_pygame()
@@ -28,8 +27,13 @@ GameStates = enum_builder(
 
 def run_game():
     kataen.init(kataen.HD_MODE)
+
     if not kataen.runs_in_web():
-        glvars.update_paths()
+        def update_paths():
+            from os import sep
+            for k, elt in enumerate(glvars.ASSETS):
+                glvars.ASSETS[k] = sep.join((glvars.ASSET_DIR, glvars.ASSETS[k]))
+        update_paths()
 
     kataen.tag_multistate(GameStates, glvars, False)
     pygame.mixer.init()
@@ -39,7 +43,7 @@ def run_game():
     gctrl.loop()
 
     print('GAME OVER.')
-    print('Best score: {:,}$'.format(defs_sg.top_score))
+    print('Best score: {:,}$'.format(glvars.top_score))
 
     kataen.cleanup()
 

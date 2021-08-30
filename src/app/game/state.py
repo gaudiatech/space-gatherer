@@ -1,5 +1,6 @@
-import defs_sg
+import glvars as defs_sg
 import katagames_sdk.engine as kataen
+from DifficultyModel import DifficultyModel
 from katagames_sdk.engine import BaseGameState
 from katagames_sdk.engine import EngineEvTypes, EventReceiver
 from sprites import SpaceBg, Nugget, ScoreBoard, Bomb, Explosion
@@ -65,12 +66,20 @@ class GameState(BaseGameState):
     def __init__(self, gsid, gsname):
         super().__init__(gsid, gsname)
         self._v = self._ctrl = None
+        self.diffmod = None
 
     def enter(self):
         """
         :return: a tuple (score: int, abort: bool)
         """
-        defs_sg.reset_gl_game_vars()
+        if defs_sg.cdiff:
+            defs_sg.cdiff.reset()
+            self.diffmod = defs_sg.cdiff
+        else:
+            self.diffmod = DifficultyModel()
+            defs_sg.cdiff = self.diffmod
+
+        diff = self.diffmod
 
         if defs_sg.music_obj is None:
             print('music starts')
@@ -91,7 +100,7 @@ class GameState(BaseGameState):
         spacebg = SpaceBg()
         li_explosions = list()
 
-        for k in range(defs_sg.nb_bombs):
+        for k in range(diff.nb_bombs):
             li_bombs.append(Bomb())
 
         friendly_sprites = pygame.sprite.Group(nugget, my_ship)
@@ -108,6 +117,7 @@ class GameState(BaseGameState):
         # - ajout composants
         self._v = GameView(dico)
         self._ctrl = GameCtrl(
+            diff,
             li_explosions,
             my_ship,
             nugget,

@@ -1,6 +1,5 @@
 import random
-import defs_sg
-import tuning as tuning
+import glvars
 import katagames_sdk.engine as kataen
 
 
@@ -12,7 +11,7 @@ class Bomb(pygame.sprite.Sprite):
         super().__init__()
         self.scr = kataen.get_screen()
 
-        temp = pygame.image.load(defs_sg.ASSETS[4])
+        temp = pygame.image.load(glvars.ASSETS[4])
         self.image = pygame.transform.scale(temp, (128, 128))
 
         self.rect = self.image.get_rect()
@@ -32,7 +31,7 @@ class Bomb(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.centerx += self.dx
-        self.rect.centery += defs_sg.simu_avatar_speed + self.increm_yspeed
+        self.rect.centery += glvars.cdiff.simu_avatar_speed + self.increm_yspeed
 
         if self.rect.top > self.scr.get_height():
             self.reset()
@@ -43,14 +42,14 @@ class Nugget(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load(defs_sg.ASSETS[3])
+        self.image = pygame.image.load(glvars.ASSETS[3])
         self.rect = self.image.get_rect()
 
         self.reset()
-        defs_sg.nuggets_out -= 1  # first reset doesnt count
+        glvars.cdiff.nuggets_out -= 1  # first reset doesnt count
 
     def update(self):
-        self.rect.centery += defs_sg.simu_avatar_speed
+        self.rect.centery += glvars.cdiff.simu_avatar_speed
         if self.rect.top > kataen.get_screen().get_height():
             self.reset()
 
@@ -58,10 +57,10 @@ class Nugget(pygame.sprite.Sprite):
         self.rect.centery = 0
         self.rect.centerx = random.randrange(0, kataen.get_screen().get_width())
 
-        defs_sg.nuggets_out += 1
-        if defs_sg.nuggets_out == defs_sg.STEP_FOR_DIFF_INCREM:
-            tuning.handle_diff_increase()
-            defs_sg.nuggets_out = 0
+        glvars.cdiff.nuggets_out += 1
+        if glvars.cdiff.nuggets_out == glvars.cdiff.STEP_FOR_DIFF_INCREM:
+            glvars.cdiff.handle_diff_increase()
+            glvars.cdiff.nuggets_out = 0
 
 
 class ScoreBoard(pygame.sprite.Sprite):
@@ -77,7 +76,6 @@ class ScoreBoard(pygame.sprite.Sprite):
 
     def update(self):
         self.text = "HP: {}/{}  |  Cash: {:,}$".format(self.lives, self.maxlives, self.score)
-
         self.image = self.font.render(self.text, True, (255, 255, 0))
         self.rect = self.image.get_rect()
 
@@ -100,8 +98,8 @@ class Explosion(pygame.sprite.Sprite):
     @classmethod
     def preload_animation(cls):
         if cls.strip is None:
-            # print(defs_sg.ASSETS[6])
-            tmp_img = pygame.image.load(defs_sg.ASSETS[6])
+            # print(glvars.ASSETS[6])
+            tmp_img = pygame.image.load(glvars.ASSETS[6])
             tmp_img.convert_alpha()
             cls.strip = list()
 
@@ -132,14 +130,14 @@ class Explosion(pygame.sprite.Sprite):
             if not (self.slow_anim_cpt % 2):
                 self.image = self.strip[self.curr_frame]
 
-            self.rect.centery += defs_sg.simu_avatar_speed + random.randint(-8, 8)
+            self.rect.centery += glvars.cdiff.simu_avatar_speed + random.randint(-8, 8)
             self.rect.centerx += random.randint(-30, 32)
 
 
 class SpaceBg(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load(defs_sg.ASSETS[0])
+        self.image = pygame.image.load(glvars.ASSETS[0])
         self.image = self.image.convert()  # ?
         self.scr = kataen.get_screen()
 
@@ -157,7 +155,7 @@ class SpaceBg(pygame.sprite.Sprite):
         self.rect.bottomleft = 0, self.bsup_y
 
     def update(self):
-        self.rect.centery += defs_sg.simu_avatar_speed  # vertical scrolling
+        self.rect.centery += glvars.cdiff.simu_avatar_speed  # vertical scrolling
 
         if self.rect.top >= 0:
             self.reset()
@@ -167,8 +165,8 @@ class Spacecraft(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        # print(defs_sg.ASSETS[1])
-        self.image = pygame.image.load(defs_sg.ASSETS[1])
+        # print(glvars.ASSETS[1])
+        self.image = pygame.image.load(glvars.ASSETS[1])
         self.rect = self.image.get_rect()
 
         self.consty = kataen.get_screen().get_height()-95
@@ -180,22 +178,22 @@ class Spacecraft(pygame.sprite.Sprite):
         else:
             pygame.mixer.init()
 
-            self._snd_slow_engin = pygame.mixer.Sound(defs_sg.ASSETS[-1])
+            self._snd_slow_engin = pygame.mixer.Sound(glvars.ASSETS[-1])
             self._snd_slow_engin.set_volume(0.44)
             
-            self._snd_fast_engin = pygame.mixer.Sound(defs_sg.ASSETS[-4])
+            self._snd_fast_engin = pygame.mixer.Sound(glvars.ASSETS[-4])
             self._snd_fast_engin.set_volume(1.22)
 
-            self.snd_boom = pygame.mixer.Sound(defs_sg.ASSETS[-2])
+            self.snd_boom = pygame.mixer.Sound(glvars.ASSETS[-2])
             self.snd_boom.set_volume(0.55)
 
-            self.snd_yay = pygame.mixer.Sound(defs_sg.ASSETS[-3])
+            self.snd_yay = pygame.mixer.Sound(glvars.ASSETS[-3])
             self.snd_yay.set_volume(0.8)
 
             self.engine_sound = self._snd_slow_engin
 
-        self.trail_img = pygame.image.load(defs_sg.ASSETS[2])
-        self.big_trail_img = pygame.image.load(defs_sg.ASSETS[5])
+        self.trail_img = pygame.image.load(glvars.ASSETS[2])
+        self.big_trail_img = pygame.image.load(glvars.ASSETS[5])
 
         self.trail_sz = self.trail_img.get_size()
         self._k = 1
@@ -220,13 +218,13 @@ class Spacecraft(pygame.sprite.Sprite):
         else:
             decalx, decaly = 1, 1
 
-        if defs_sg.booster_flag:
+        if glvars.cdiff.booster_flag:
             surf.blit(self.big_trail_img, (decalx + tx, -11 + decaly + ty))
         else:
             surf.blit(self.trail_img, (decalx + tx, -11 + decaly + ty))
 
     def update(self):
-        if defs_sg.booster_flag and self._low_speed:
+        if glvars.cdiff.booster_flag and self._low_speed:
             self._low_speed = False
             self._snd_slow_engin.stop()
             self.engine_sound = self._snd_fast_engin
@@ -236,9 +234,9 @@ class Spacecraft(pygame.sprite.Sprite):
 
         curr_var = abs(self.rect.centerx - posx)
         if self.rect.centerx < posx:
-            effective_delta = min(defs_sg.STEERING_LIMIT, curr_var)
+            effective_delta = min(glvars.STEERING_LIMIT, curr_var)
         else:
-            effective_delta = -1 * min(defs_sg.STEERING_LIMIT, curr_var)
+            effective_delta = -1 * min(glvars.STEERING_LIMIT, curr_var)
 
         self.rect.center = (self.rect.centerx + effective_delta, self.consty)
 

@@ -1,4 +1,4 @@
-import defs_sg
+import glvars as defs_sg
 from katagames_sdk.engine import EngineEvTypes, EventReceiver
 from sprites import Explosion, Bomb
 import katagames_sdk.engine as kataen
@@ -9,8 +9,9 @@ pygame = kataen.import_pygame()
 
 class GameCtrl(EventReceiver):
 
-    def __init__(self, explo, ship, nugget, li_bombs, spacebg, danger_spr, friendly_spr, ref_view):
+    def __init__(self, diff, explo, ship, nugget, li_bombs, spacebg, danger_spr, friendly_spr, ref_view):
         super().__init__()
+        self.diffmod = diff
 
         self.danger_spr = danger_spr
         self.explosions = explo
@@ -28,7 +29,7 @@ class GameCtrl(EventReceiver):
         li_bombs = self.li_bombs
 
         # check if there are enough bombs... If not, we add one
-        if len(li_bombs) < defs_sg.nb_bombs:
+        if len(li_bombs) < self.diffmod.nb_bombs:
             obj = Bomb()
             li_bombs.append(obj)
             self.danger_spr.add(obj)
@@ -37,7 +38,7 @@ class GameCtrl(EventReceiver):
             # we manage to gather a nugget
             self.ship.snd_yay.play()
             self.nugget.reset()
-            defs_sg.scoreboard.score += defs_sg.nugget_reward
+            defs_sg.scoreboard.score += self.diffmod.nugget_reward
 
         hit_bombs = pygame.sprite.spritecollide(
             self.ship,

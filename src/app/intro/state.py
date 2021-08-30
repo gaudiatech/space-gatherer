@@ -1,7 +1,7 @@
 from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
 import katagames_sdk.engine as kataen
 from sprites import Spacecraft, SpaceBg
-import defs_sg
+import glvars as defs_sg
 
 
 pygame = kataen.import_pygame()
